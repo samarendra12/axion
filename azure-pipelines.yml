@@ -1,0 +1,40 @@
+trigger: none
+
+pool:
+  name: axionpool
+
+stages:
+
+- stage: TerraformInit
+  displayName: Terraform Init
+
+  jobs:
+  - job: TerraformInitJob
+    displayName: Terraform Init Job
+
+    steps:
+
+    - task: TerraformTask@5
+      displayName: Terraform Init
+      inputs:
+        provider: azurerm
+        command: init
+        backendServiceArm: testing-axion-service-connection
+        backendAzureRmResourceGroupName: testrg
+        backendAzureRmStorageAccountName: axionstg1234
+        backendAzureRmContainerName: axion-container
+        backendAzureRmKey: samar.tf
+
+    - task: TerraformTask@5
+      displayName: Terraform Plan
+      inputs:
+        provider: azurerm
+        command: plan
+        environmentServiceNameAzureRM: testing-axion-service-connection
+
+    - task: TerraformTask@5
+      displayName: Terraform Apply
+      inputs:
+        provider: azurerm
+        command: apply
+        environmentServiceNameAzureRM: testing-axion-service-connection
